@@ -1,12 +1,14 @@
 <?php
 
 return [
-    'categories' => ['regular' => 'Regular T-Shirts', 'oversized' => 'Oversized T-Shirts', 'hoodies' => 'Hoodies'],
+    'categories' => ['regular' => 'Regular T-Shirts', 'oversized' => 'Oversized T-Shirts', 'hoodies' => 'Hoodies', 'sweatshirts' => 'Sweatshirts'],
     'sizes' => ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'],
     'colors' => [
         'black' => ['أسود', '#19191f'], 'bone' => ['أوف وايت', '#e8dfce'],
         'burgundy' => ['نبيتي', '#661f2a'], 'charcoal' => ['رمادي غامق', '#585761'],
         'white' => ['أبيض', '#fafafa'], 'red' => ['أحمر', '#e53442'],
+        'navy' => ['كحلي', '#222c46'], 'slate' => ['أزرق رمادي', '#526775'],
+        'gray' => ['رمادي فاتح', '#b9bdbe'],
     ],
     'modes' => ['ready' => 'تصميم جاهز', 'upload' => 'هرفع تصميمي', 'idea' => 'عندي فكرة'],
     'placements' => ['front' => 'أمامي', 'back' => 'خلفي'],

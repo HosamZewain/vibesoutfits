@@ -5,14 +5,28 @@
     $colorKeys = $product->variants->pluck('color')->unique()->values();
     $sizeKeys = array_values(array_intersect(config('vibe.sizes'), $product->variants->pluck('size')->unique()->all()));
     $mode = old('design_mode', $customize || ! $product->ready_enabled ? 'idea' : 'ready');
+    $photos = $product->catalogPhotos();
+    $cover = $product->imageUrl();
 @endphp
 <div class="wrap">
     <nav class="breadcrumb" aria-label="مسار الصفحة"><a href="{{ route('home') }}">الرئيسية</a><span>/</span><a href="{{ route('shop') }}">المتجر</a><span>/</span><b lang="en">{{ $product->name }}</b></nav>
     <div class="product-detail">
-        <div class="detail-media">
-            <img src="{{ $product->imageUrl() }}" width="512" height="512" alt="{{ $product->name }}">
-            @if($product->badge)<span class="product-badge">{{ $product->badge }}</span>@endif
-            <div class="media-caption" lang="en"><span>{{ config('app.name') }}</span><span>MADE TO ORDER <x-icon name="spark" width="13" height="13" /></span></div>
+        <div class="detail-gallery" @if($photos) data-product-gallery @endif>
+            <div class="detail-media">
+                <img src="{{ $cover }}" width="512" height="512" alt="{{ $product->name }}" data-gallery-main>
+                @if($product->badge)<span class="product-badge">{{ $product->badge }}</span>@endif
+                <div class="media-caption" lang="en"><span>{{ config('app.name') }}</span><span>MADE TO ORDER <x-icon name="spark" width="13" height="13" /></span></div>
+            </div>
+            @if($photos)
+                <div class="gallery-thumbnails" role="group" aria-label="صور المنتج وألوانه">
+                    @foreach($photos as [$file, $color, $angle])
+                        @php($photo = asset('assets/img/catalog/'.$file.'.jpg'))
+                        <button type="button" data-gallery-photo data-color="{{ $color }}" data-image="{{ $photo }}" aria-label="{{ config('vibe.colors.'.$color.'.0') }}، {{ $angle }}" aria-pressed="{{ $photo === $cover ? 'true' : 'false' }}">
+                            <img src="{{ $photo }}" width="72" height="72" loading="lazy" alt="">
+                        </button>
+                    @endforeach
+                </div>
+            @endif
         </div>
         <section class="detail-content" dir="rtl">
             <div class="detail-name" dir="ltr">
@@ -22,7 +36,7 @@
             </div>
             <p class="detail-description">{{ $product->description }}</p>
             @if($colorKeys->isEmpty())
-                <div class="empty"><p>القطعة دي خلصت حاليًا.</p><a class="btn primary" href="{{ route('shop') }}">شوف باقي الكوليكشن</a></div>
+                <div class="empty"><p>القطعة دي غير متاحة للطلب حاليًا.</p><a class="btn primary" href="{{ route('shop') }}">شوف باقي الكوليكشن</a></div>
             @else
                 <form method="post" action="{{ route('cart.add', ['product' => $product->slug]) }}" enctype="multipart/form-data" class="fields" data-product-form data-base="{{ $product->price }}" data-custom="{{ $product->custom_fee }}" data-variants='@json($product->variants->map->only(["color", "size", "stock"])->values())'>
                     @csrf

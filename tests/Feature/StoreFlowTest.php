@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\ShippingZone;
 use App\Models\User;
+use Database\Seeders\LaunchCatalogSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Mail;
@@ -151,6 +152,30 @@ class StoreFlowTest extends TestCase
         $this->assertSame(7, $variant->fresh()->stock);
         $this->get(route('admin.products'))->assertOk()->assertSee('Demo Tee');
         $this->get(route('admin.shipping'))->assertOk()->assertSee('الإسكندرية');
+    }
+
+    public function test_launch_catalog_groups_colors_without_overwriting_admin_prices_or_stock(): void
+    {
+        $this->seed(LaunchCatalogSeeder::class);
+
+        $this->assertDatabaseCount('products', 4);
+        $this->assertSame([899], Product::distinct()->pluck('price')->all());
+        $hoodie = Product::where('slug', 'relaxed-hoodie')->sole();
+        $this->assertSame(['black', 'navy', 'white'], $hoodie->variants()->orderBy('color')->distinct()->pluck('color')->all());
+        $this->get(route('product', ['product' => $hoodie->slug]))
+            ->assertOk()
+            ->assertSee('<html lang="ar" dir="rtl">', false)
+            ->assertSee('relaxed-navy-angle.jpg')
+            ->assertDontSee('data-product-form');
+
+        $hoodie->update(['price' => 950]);
+        $variant = $hoodie->variants()->where('color', 'navy')->where('size', 'M')->sole();
+        $variant->update(['stock' => 2]);
+        $this->seed(LaunchCatalogSeeder::class);
+
+        $this->assertSame(950, $hoodie->fresh()->price);
+        $this->assertSame(2, $variant->fresh()->stock);
+        $this->assertDatabaseCount('products', 4);
     }
 
     private function admin(): User

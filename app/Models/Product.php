@@ -26,4 +26,9 @@ class Product extends Model
             ? asset($this->image_path)
             : route('product.image', $this);
     }
+
+    public function catalogPhotos(): array
+    {
+        return config('launch_catalog.'.$this->slug.'.photos', []);
+    }
 }

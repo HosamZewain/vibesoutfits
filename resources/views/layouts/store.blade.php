@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,12 +13,12 @@
     @endif
     <link rel="icon" href="{{ asset('assets/img/mark.svg') }}" type="image/svg+xml">
     <link rel="stylesheet" href="{{ asset('assets/fonts/fonts.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/store.css') }}">
-    <script src="{{ asset('assets/store.js') }}" defer></script>
+    <link rel="stylesheet" href="{{ asset('assets/store.css') }}?v=catalog-1">
+    <script src="{{ asset('assets/store.js') }}?v=catalog-1" defer></script>
 </head>
 <body>
 <a href="#main" class="skip-link" dir="rtl">انتقل للمحتوى</a>
-<div class="topstrip" lang="en"><x-icon name="spark" width="11" height="11" /> DROP 01 IS LIVE <span></span> MADE TO ORDER IN EGYPT</div>
+<div class="topstrip" lang="en" dir="ltr"><x-icon name="spark" width="11" height="11" /> DROP 01 IS LIVE <span></span> MADE TO ORDER IN EGYPT</div>
 <header class="site-header">
     <div class="wrap nav">
         <x-brand />
@@ -48,7 +48,7 @@
         @endif
         <div class="footer-end" lang="en">INDEPENDENT STREETWEAR<br>MADE TO ORDER • EGYPT</div>
     </div>
-    <div class="wrap footer-bottom" lang="en"><span>© {{ date('Y') }} {{ config('app.name') }}</span><span>WEAR YOUR VIBE <x-icon name="spark" width="13" height="13" /></span></div>
+    <div class="wrap footer-bottom" lang="en"><span dir="ltr">© {{ date('Y') }} {{ config('app.name') }}</span><span dir="ltr">WEAR YOUR VIBE <x-icon name="spark" width="13" height="13" /></span></div>
 </footer>
 </body>
 </html>

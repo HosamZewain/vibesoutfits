@@ -9,6 +9,46 @@ menu?.addEventListener('click', () => {
 
 const money = new Intl.NumberFormat('en-EG');
 const product = document.querySelector('[data-product-form]');
+const gallery = document.querySelector('[data-product-gallery]');
+
+if (gallery) {
+    const mainPhoto = gallery.querySelector('[data-gallery-main]');
+    const photos = Array.from(gallery.querySelectorAll('[data-gallery-photo]'));
+    const colors = Array.from(product?.querySelectorAll('input[name="color"]') ?? []);
+
+    function showPhoto(photo) {
+        mainPhoto.src = photo.dataset.image;
+        mainPhoto.alt = photo.getAttribute('aria-label');
+        for (const thumbnail of photos) {
+            thumbnail.setAttribute('aria-pressed', String(thumbnail === photo));
+        }
+    }
+
+    for (const photo of photos) {
+        photo.addEventListener('click', () => {
+            const color = colors.find(option => option.value === photo.dataset.color);
+            if (color && !color.checked) {
+                color.checked = true;
+                color.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+            showPhoto(photo);
+        });
+    }
+
+    for (const color of colors) {
+        color.addEventListener('input', () => {
+            const photo = photos.find(thumbnail => thumbnail.dataset.color === color.value);
+            if (photo) showPhoto(photo);
+        });
+    }
+
+    const selectedColor = colors.find(color => color.checked);
+    if (selectedColor) {
+        const photo = photos.find(thumbnail => thumbnail.dataset.color === selectedColor.value);
+        if (photo) showPhoto(photo);
+    }
+}
+
 if (product) {
     const variants = JSON.parse(product.dataset.variants);
     const render = () => {

@@ -1,7 +1,7 @@
 @extends('layouts.store')
 
 @section('content')
-<section class="hero" aria-labelledby="hero-title">
+<section class="hero" aria-labelledby="hero-title" dir="ltr">
     <picture class="hero-photo"><img src="{{ asset('assets/img/campaign.jpg') }}" width="1536" height="1024" fetchpriority="high" alt="شاب بتيشيرت أسود بطباعة حمرا وبنت بهودي نبيتي في شارع بالقاهرة"></picture>
     <div class="hero-shade"></div>
     <div class="wrap hero-inner">
@@ -17,7 +17,7 @@
         <div class="hero-index" lang="en"><i>01</i><span></span> THE FIRST DROP</div>
     </div>
 </section>
-<div class="vibe-tape" aria-label="ستريت وير. يتعمل مخصوص ليك. من مصر.">
+<div class="vibe-tape" aria-label="ستريت وير. يتعمل مخصوص ليك. من مصر." dir="ltr">
     <div class="tape-content" lang="en" aria-hidden="true">
         @for($i=0;$i<3;$i++)
             <x-icon name="spark" width="18" height="18" /><span>STREETWEAR</span><x-icon name="spark" width="18" height="18" /><span>MADE TO ORDER</span><x-icon name="spark" width="18" height="18" /><span>DESIGNED BY YOU</span><x-icon name="spark" width="18" height="18" /><span>FROM CAIRO</span>
@@ -26,7 +26,7 @@
 </div>
 <section class="wrap section-space" aria-labelledby="drop-title">
     <div class="section-heading">
-        <div><p class="micro accent"><span class="square"></span> THE COLLECTION / 01</p><h2 id="drop-title" class="display" lang="en">THE FIRST DROP</h2></div>
+        <div><p class="micro accent" lang="en" dir="ltr"><span class="square"></span> THE COLLECTION / 01</p><h2 id="drop-title" class="display" lang="en">THE FIRST DROP</h2></div>
         <a class="text-link" href="{{ route('shop') }}"><span>شوف كل المنتجات</span> <x-icon name="up-right" width="16" height="16" /></a>
     </div>
     @if($products->isNotEmpty())
@@ -36,7 +36,7 @@
     @endif
 </section>
 <section class="wrap section-space custom-section" id="how-it-works">
-    <div class="custom-banner">
+    <div class="custom-banner" dir="ltr">
         <div class="custom-graphic" aria-hidden="true"><x-icon name="spark" /><span>VIBES<br>STUDIO</span></div>
         <div class="custom-copy" dir="rtl">
             <p class="micro accent" dir="ltr">THE CUSTOM STUDIO / 02</p>
