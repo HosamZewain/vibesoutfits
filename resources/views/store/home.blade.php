@@ -2,7 +2,7 @@
 
 @section('content')
 <section class="hero" aria-labelledby="hero-title" dir="ltr">
-    <picture class="hero-photo"><img src="{{ asset('assets/img/campaign.jpg') }}" width="1536" height="1024" fetchpriority="high" alt="شاب بتيشيرت أسود بطباعة حمرا وبنت بهودي نبيتي في شارع بالقاهرة"></picture>
+    <picture class="hero-photo"><img src="{{ asset('assets/img/campaign-navy.jpg') }}" width="1536" height="1024" fetchpriority="high" alt="شاب بتيشيرت أسود بطباعة زرقا وبنت بهودي كحلي في شارع بالقاهرة"></picture>
     <div class="hero-shade"></div>
     <div class="wrap hero-inner">
         <div class="hero-content">

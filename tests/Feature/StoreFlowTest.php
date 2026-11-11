@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\ShippingZone;
 use App\Models\User;
 use Database\Seeders\LaunchCatalogSeeder;
+use Database\Seeders\ShippingZoneSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Mail;
@@ -157,6 +158,7 @@ class StoreFlowTest extends TestCase
     public function test_launch_catalog_groups_colors_without_overwriting_admin_prices_or_stock(): void
     {
         $this->seed(LaunchCatalogSeeder::class);
+        $this->seed(ShippingZoneSeeder::class);
 
         $this->assertDatabaseCount('products', 4);
         $this->assertSame([899], Product::distinct()->pluck('price')->all());
@@ -166,15 +168,19 @@ class StoreFlowTest extends TestCase
             ->assertOk()
             ->assertSee('<html lang="ar" dir="rtl">', false)
             ->assertSee('relaxed-navy-angle.jpg')
-            ->assertDontSee('data-product-form');
+            ->assertSee('data-product-form');
+
+        $variant = $hoodie->variants()->where('color', 'navy')->where('size', 'M')->sole();
+        $this->assertSame(2, $variant->stock);
+        $this->add($hoodie, ['color' => 'navy', 'size' => 'M', 'quantity' => 2]);
+        $this->post(route('checkout.place'), $this->delivery(['quoted_total' => 1863]))->assertRedirect();
+        $this->assertDatabaseHas('orders', ['subtotal' => 1798, 'shipping_fee' => 65, 'total' => 1863]);
 
         $hoodie->update(['price' => 950]);
-        $variant = $hoodie->variants()->where('color', 'navy')->where('size', 'M')->sole();
-        $variant->update(['stock' => 2]);
         $this->seed(LaunchCatalogSeeder::class);
 
         $this->assertSame(950, $hoodie->fresh()->price);
-        $this->assertSame(2, $variant->fresh()->stock);
+        $this->assertSame(0, $variant->fresh()->stock);
         $this->assertDatabaseCount('products', 4);
     }
 

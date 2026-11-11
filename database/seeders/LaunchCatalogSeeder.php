@@ -29,7 +29,7 @@ class LaunchCatalogSeeder extends Seeder
                     foreach (['S', 'M', 'L', 'XL', 'XXL'] as $size) {
                         $product->variants()->firstOrCreate(
                             ['color' => $color, 'size' => $size],
-                            ['active' => true, 'stock' => 0],
+                            ['active' => true, 'stock' => 2],
                         );
                     }
                 }

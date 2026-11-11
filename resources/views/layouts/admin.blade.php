@@ -6,10 +6,10 @@
     <meta name="robots" content="noindex, nofollow">
     <meta name="referrer" content="same-origin">
     <title>@yield('title', 'لوحة الإدارة') | {{ config('app.name') }}</title>
-    <link rel="icon" href="{{ asset('assets/img/mark.svg') }}" type="image/svg+xml">
+    <link rel="icon" href="{{ asset('assets/img/vibes-icon-navy.png') }}" type="image/png">
     <link rel="stylesheet" href="{{ asset('assets/fonts/fonts.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/store.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/admin.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/store.css') }}?v=navy-1">
+    <link rel="stylesheet" href="{{ asset('assets/admin.css') }}?v=navy-1">
 </head>
 <body class="admin-body">
 @if(request()->routeIs('admin.login'))
