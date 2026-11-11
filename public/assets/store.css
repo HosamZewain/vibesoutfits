@@ -72,7 +72,7 @@ h3{font-size:1rem}
 .small{font-size:.78rem}
 .display{font-size:clamp(46px,6vw,86px)}
 .section-heading .display{margin-top:7px}
-.section-heading [dir=ltr]{text-align:match-parent}
+.section-heading [dir=ltr]{text-align:right}
 .text-link{display:inline-flex;align-items:center;gap:9px;padding-block:5px;border-bottom:1px solid var(--violet);color:var(--violet);font-weight:800;font-size:.85rem;white-space:nowrap}
 .text-link:hover{color:#ffd5d9}
 .product-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px 18px}
@@ -119,7 +119,7 @@ h3{font-size:1rem}
 .page-main{padding-bottom:65px}
 .page-intro{padding:42px 0 27px}
 .page-intro .display{margin-block:7px 13px}
-.page-intro .micro,.page-intro .display{direction:ltr;text-align:match-parent}
+.page-intro .micro,.page-intro .display{direction:ltr;text-align:right}
 .page-intro>p[dir=rtl]{text-align:start;width:max-content;max-width:100%;color:var(--muted);font-size:.92rem}
 .custom-intro{position:relative;overflow:hidden;isolation:isolate;background:linear-gradient(115deg,#3f1b1e,#1a1717 78%);border:1px solid #68383c;margin-top:30px;padding:34px 27px}
 .intro-spark{position:absolute;color:#ffa3ab2b;z-index:-1;width:240px;height:240px;inset-inline-end:-30px;bottom:-48px;transform:rotate(-12deg)}

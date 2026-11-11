@@ -13,7 +13,7 @@
     @endif
     <link rel="icon" href="{{ asset('assets/img/mark.svg') }}" type="image/svg+xml">
     <link rel="stylesheet" href="{{ asset('assets/fonts/fonts.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/store.css') }}?v=catalog-1">
+    <link rel="stylesheet" href="{{ asset('assets/store.css') }}?v=catalog-2">
     <script src="{{ asset('assets/store.js') }}?v=catalog-1" defer></script>
 </head>
 <body>
