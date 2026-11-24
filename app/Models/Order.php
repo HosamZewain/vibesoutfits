@@ -37,8 +37,11 @@ class Order extends Model
     public function label(): string
     {
         if ($this->status === 'new') {
+            if ($this->payment_method === 'whatsapp' && ! $this->allApproved()) {
+                return 'في انتظار معاينة التصميم';
+            }
             if ($this->paid_amount < $this->deposit_due) {
-                return 'في انتظار التحويل';
+                return $this->payment_method === 'whatsapp' ? 'في انتظار تأكيد الدفع' : 'في انتظار التحويل';
             }
             if (! $this->allApproved()) {
                 return 'التصميم تحت المراجعة';

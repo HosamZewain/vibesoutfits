@@ -36,7 +36,7 @@ class StoreFlowTest extends TestCase
         $order = Order::sole();
         $response->assertRedirect(route('tracking.show', $order->number));
         $this->assertDatabaseHas('orders', [
-            'id' => $order->id, 'phone' => '01000000000', 'subtotal' => 1298, 'shipping_fee' => 65, 'total' => 1363, 'deposit_due' => 0,
+            'id' => $order->id, 'phone' => '01000000000', 'subtotal' => 1298, 'shipping_fee' => 65, 'total' => 1363, 'deposit_due' => 0, 'payment_method' => 'whatsapp',
         ]);
         $this->assertDatabaseHas('variants', ['id' => $order->items->sole()->variant_id, 'stock' => 10]);
         $this->assertDatabaseHas('order_items', ['order_id' => $order->id, 'quantity' => 2, 'unit_price' => 649]);
@@ -56,8 +56,7 @@ class StoreFlowTest extends TestCase
         Storage::fake('local');
         $product = Product::where('slug', 'after-hours')->firstOrFail();
         $this->add($product, ['design_mode' => 'idea', 'idea' => 'Red graphic with a moon and geometric lines.']);
-        $this->post(route('checkout.place'), $this->delivery())->assertSessionHasErrors('payment');
-        $this->post(route('checkout.place'), $this->delivery(['payment' => 'transfer', 'quoted_total' => 834]))->assertRedirect();
+        $this->post(route('checkout.place'), $this->delivery(['quoted_total' => 834]))->assertRedirect();
         $order = Order::sole();
         $item = $order->items()->sole();
         $params = ['order' => $order->number, 'item' => $item->id];
@@ -108,7 +107,7 @@ class StoreFlowTest extends TestCase
         ]))->assertSessionHasErrors('artwork');
 
         $this->add($product, ['design_mode' => 'upload', 'artwork' => $this->image('customer.jpg')]);
-        $this->post(route('checkout.place'), $this->delivery(['payment' => 'transfer']))->assertRedirect();
+        $this->post(route('checkout.place'), $this->delivery())->assertRedirect();
         $order = Order::sole();
         $item = $order->items()->sole();
         $status = route('admin.orders.status', ['order' => $order->number]);
@@ -184,6 +183,45 @@ class StoreFlowTest extends TestCase
         $this->assertDatabaseCount('products', 4);
     }
 
+    public function test_custom_checkout_without_transfer_settings_registers_order_for_whatsapp_preview(): void
+    {
+        config(['vibe.transfer_recipient' => null, 'vibe.transfer_details' => null]);
+        $this->seed(LaunchCatalogSeeder::class);
+        $this->seed(ShippingZoneSeeder::class);
+        $product = Product::where('slug', 'relaxed-hoodie')->sole();
+        $this->add($product, ['design_mode' => 'idea', 'idea' => 'A simple moon design for the back.']);
+
+        $this->get(route('checkout'))
+            ->assertOk()
+            ->assertSee('تأكيد الطلب')
+            ->assertSee('معاينة التصميم على واتساب')
+            ->assertDontSee('name="payment"', false)
+            ->assertDontSee('التحويل مش متاح');
+        $this->post(route('checkout.place'), $this->delivery(['quoted_total' => 964]))
+            ->assertSessionHasNoErrors()
+            ->assertRedirect();
+
+        $order = Order::sole();
+        $this->assertDatabaseHas('orders', [
+            'id' => $order->id, 'payment_method' => 'whatsapp', 'total' => 964, 'deposit_due' => 450, 'paid_amount' => 0,
+        ]);
+        $this->assertDatabaseHas('order_items', ['order_id' => $order->id, 'design_mode' => 'idea', 'idea' => 'A simple moon design for the back.']);
+        $this->assertSame('في انتظار معاينة التصميم', $order->label());
+        $this->get(route('tracking.show', $order->number))
+            ->assertOk()
+            ->assertSee('الخطوة الجاية على واتساب')
+            ->assertSee('الدفع بيكون بعد موافقتك على المعاينة.')
+            ->assertDontSee('كمّل التحويل');
+        $this->assertStringContainsString('معاينة التصميم', (new OrderConfirmation($order))->render());
+        $this->actingAs($this->admin())
+            ->get(route('admin.orders.show', ['order' => $order->number]))
+            ->assertOk()
+            ->assertSee('بعد المعاينة على واتساب');
+        $this->patch(route('admin.orders.status', ['order' => $order->number]), ['status' => 'production'])
+            ->assertSessionHasErrors('workflow');
+        $this->assertDatabaseHas('orders', ['id' => $order->id, 'status' => 'new']);
+    }
+
     private function admin(): User
     {
         return User::factory()->create(['is_admin' => true]);
@@ -203,7 +241,7 @@ class StoreFlowTest extends TestCase
     {
         return $options + [
             'name' => 'Demo Customer', 'phone' => '+20 100 000 0000', 'email' => 'buyer@example.test',
-            'zone' => ShippingZone::where('name', 'القاهرة')->value('id'), 'city' => 'Cairo', 'address' => '123 Demo Street, floor 2', 'payment' => 'cod',
+            'zone' => ShippingZone::where('name', 'القاهرة')->value('id'), 'city' => 'Cairo', 'address' => '123 Demo Street, floor 2',
         ];
     }
 

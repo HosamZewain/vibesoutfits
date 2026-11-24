@@ -14,7 +14,7 @@
     <link rel="icon" href="{{ asset('assets/img/vibes-icon-navy.png') }}" type="image/png">
     <link rel="stylesheet" href="{{ asset('assets/fonts/fonts.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/store.css') }}?v=navy-1">
-    <script src="{{ asset('assets/store.js') }}?v=catalog-1" defer></script>
+    <script src="{{ asset('assets/store.js') }}?v=whatsapp-checkout-1" defer></script>
 </head>
 <body>
 <a href="#main" class="skip-link" dir="rtl">انتقل للمحتوى</a>

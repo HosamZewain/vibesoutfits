@@ -84,7 +84,7 @@
             </div>
         </section>
         <section class="admin-panel">
-            <header><h2>الدفع والتحصيل</h2><span class="pill">{{ $order->payment_method === 'cod' ? 'عند الاستلام' : 'تحويل' }}</span></header>
+            <header><h2>الدفع والتحصيل</h2><span class="pill">{{ match($order->payment_method) { 'whatsapp' => 'بعد المعاينة على واتساب', 'cod' => 'عند الاستلام', default => 'تحويل' } }}</span></header>
             <div class="admin-pad">
                 <dl class="totals">
                     <div><dt>القطع</dt><dd>{{ number_format($order->subtotal) }} ج.م.</dd></div>

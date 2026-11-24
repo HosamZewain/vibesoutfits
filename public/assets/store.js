@@ -86,11 +86,8 @@ if (checkout) {
         const option = checkout.elements.zone.selectedOptions[0];
         const fee = option?.dataset.fee;
         const total = fee === undefined ? null : Number(checkout.dataset.subtotal) + Number(fee);
-        const payment = new FormData(checkout).get('payment');
-        const deposit = Number(checkout.dataset.deposit);
         checkout.querySelector('[data-shipping]').textContent = fee === undefined ? 'اختار المحافظة' : egp(Number(fee));
         checkout.querySelector('[data-total]').textContent = total === null ? '—' : egp(total);
-        checkout.querySelector('[data-now]').textContent = payment === 'transfer' ? (deposit ? egp(deposit) : (total === null ? '—' : egp(total))) : egp(0);
         checkout.querySelector('[data-quoted]').value = total ?? '';
     };
     checkout.addEventListener('change', render);

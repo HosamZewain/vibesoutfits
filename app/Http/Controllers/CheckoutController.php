@@ -12,7 +12,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Throwable;
 
@@ -26,10 +25,8 @@ class CheckoutController extends Controller
         }
 
         $zones = ShippingZone::where('active', true)->orderBy('id')->get();
-        $transfer = $this->transferEnabled();
-        $depositPercent = $this->depositPercent();
 
-        return view('store.checkout', $summary + compact('zones', 'transfer', 'depositPercent'));
+        return view('store.checkout', $summary + compact('zones'));
     }
 
     public function place(Request $request, Cart $cart): RedirectResponse
@@ -43,7 +40,6 @@ class CheckoutController extends Controller
             'city' => ['required', 'string', 'max:90'],
             'address' => ['required', 'string', 'min:8', 'max:300'],
             'notes' => ['nullable', 'string', 'max:500'],
-            'payment' => ['required', Rule::in(['cod', 'transfer'])],
             'quoted_total' => ['nullable', 'integer', 'min:0'],
         ]);
 
@@ -61,19 +57,16 @@ class CheckoutController extends Controller
                 Cart::fail('السعر أو الشحن اتغير. راجع الإجمالي الجديد وأكد الطلب.');
             }
             $custom = $summary['customSubtotal'] > 0 || collect($summary['lines'])->contains(fn (array $line) => $line['design_mode'] !== 'ready');
-            if (($custom && $data['payment'] !== 'transfer') || ($data['payment'] === 'transfer' && ! $this->transferEnabled())) {
-                throw ValidationException::withMessages(['payment' => 'طريقة الدفع دي مش متاحة للطلب ده.']);
-            }
             $deposit = $custom
                 ? max(1, (int) ceil($summary['customSubtotal'] * $this->depositPercent() / 100))
-                : ($data['payment'] === 'transfer' ? $total : 0);
+                : 0;
 
             $order = Order::create([
                 'number' => 'VB-'.Str::upper(Str::random(10)),
                 'name' => $data['name'], 'phone' => $data['phone'], 'email' => $data['email'] ?? null,
                 'governorate' => $zone->name, 'city' => $data['city'], 'address' => $data['address'], 'notes' => $data['notes'] ?? null,
                 'subtotal' => $summary['subtotal'], 'shipping_fee' => $zone->fee, 'total' => $total,
-                'payment_method' => $data['payment'], 'deposit_due' => $deposit,
+                'payment_method' => 'whatsapp', 'deposit_due' => $deposit,
             ]);
 
             foreach ($summary['quantities'] as $id => $quantity) {
@@ -106,11 +99,6 @@ class CheckoutController extends Controller
         }
 
         return redirect()->route('tracking.show', $order->number)->with('placed', true);
-    }
-
-    private function transferEnabled(): bool
-    {
-        return (filled(config('vibe.transfer_recipient')) && filled(config('vibe.transfer_details'))) || app()->environment(['local', 'testing']);
     }
 
     private function depositPercent(): int

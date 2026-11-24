@@ -15,14 +15,19 @@
                 @endif
                 @if($order->carrier)<p>شركة الشحن: <strong>{{ $order->carrier }}</strong> · رقم الشحنة: <strong><bdi>{{ $order->shipment_code }}</bdi></strong></p>@endif
             </section>
-            @if($order->status === 'new' && $order->paid_amount < $order->deposit_due)
+            @if($order->status === 'new' && $order->payment_method === 'whatsapp')
+                <section class="panel transfer-note">
+                    <h2>الخطوة الجاية على واتساب</h2>
+                    <p>هنتواصل معاك على رقم الموبايل المسجّل لمراجعة تفاصيل الطلب ومعاينة التصميم. الدفع بيكون بعد موافقتك على المعاينة.</p>
+                </section>
+            @elseif($order->status === 'new' && $order->paid_amount < $order->deposit_due)
                 <section class="panel transfer-note">
                     <h2>كمّل التحويل عشان نأكد الطلب</h2>
                     <p>المتبقي من الدفعة الأولى <strong>{{ number_format($order->deposit_due - $order->paid_amount) }} ج.م.</strong></p>
                     @if(config('vibe.transfer_recipient') && config('vibe.transfer_details'))
                         <p>إلى: <strong><bdi>{{ config('vibe.transfer_recipient') }}</bdi></strong></p><p class="preline">{{ config('vibe.transfer_details') }}</p>
                     @else
-                        <p>التحويل تجريبي على النسخة المحلية. تسجيل المقدم من لوحة الإدارة.</p>
+                        <p>هنتواصل معاك على واتساب لتأكيد تفاصيل الدفع.</p>
                     @endif
                     <small>الحالة بتتحدّث بعد مراجعة التحويل.</small>
                 </section>
